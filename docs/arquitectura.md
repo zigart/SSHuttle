@@ -98,7 +98,7 @@ El modelo no recibe contraseñas, claves privadas, kubeconfig ni el tráfico SSH
 - `crates/updates/` — apt y dnf.
 - `crates/kube/` — lista blanca de kubectl.
 - `crates/assistant/` — proveedores, recorte de contexto y acciones tipadas.
-- `ui/` — React: alta mínima, consola, y pantallas que aparecen según el sondeo.
+- `ui/` — React: barra vertical de fichas (iniciales y punto de estado) con casillero de alta, consola, y pantallas que aparecen según el sondeo.
 - `docs/arquitectura.md` — este diseño.
 
 Los crates de capacidades no abren sockets: reciben un handle del supervisor. El asistente no habla SSH: llama a esos crates. Así la reconexión, el sondeo y las credenciales viven en un solo lugar.

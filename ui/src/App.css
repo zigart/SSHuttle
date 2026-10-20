@@ -21,8 +21,88 @@ input {
 
 .app {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 72px 280px 1fr;
   min-height: 100vh;
+}
+
+.barra-fichas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 10px;
+  background: #1a1713;
+  border-right: 1px solid #3a3228;
+}
+
+.ficha,
+.casillero-alta {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 14px;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.ficha {
+  background: #2c261f;
+  color: #f3ead7;
+}
+
+.ficha.elegida {
+  outline: 2px solid #e8a87c;
+  outline-offset: 1px;
+  background: #3a3228;
+}
+
+.ficha-iniciales {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.ficha-punto {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #2c261f;
+}
+
+.ficha.elegida .ficha-punto {
+  box-shadow: 0 0 0 2px #3a3228;
+}
+
+.ficha-punto-activa {
+  background: #8fceab;
+}
+
+.ficha-punto-reintentando {
+  background: #e0b15a;
+}
+
+.ficha-punto-inactiva {
+  background: #d08b78;
+}
+
+.casillero-alta {
+  background: transparent;
+  color: #cbbba4;
+  border: 1px dashed #6d5c49;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.casillero-alta.elegido {
+  border-style: solid;
+  border-color: #e8a87c;
+  color: #e8a87c;
 }
 
 .panel {
@@ -42,21 +122,18 @@ input {
 
 .marca p,
 .ayuda,
-.vacio {
+.vacio,
+.nombre-elegido {
   margin: 0;
   color: #cbbba4;
 }
 
-.lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.nombre-elegido {
+  font-size: 1.05rem;
+  color: #f3ead7;
+  font-weight: 600;
 }
 
-.servidor,
 .secundario,
 .alta button,
 .huella button {
@@ -66,21 +143,6 @@ input {
   background: #e8a87c;
   color: #1c1915;
   cursor: pointer;
-}
-
-.servidor {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  background: #2c261f;
-  color: #f3ead7;
-  text-align: left;
-}
-
-.servidor.activo {
-  outline: 1px solid #e8a87c;
 }
 
 .secundario,
@@ -218,12 +280,22 @@ input {
   padding: 32px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .app {
-    grid-template-columns: 1fr;
+    grid-template-columns: 64px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .barra-fichas {
+    grid-row: 1 / -1;
+  }
+
+  .panel {
+    border-right: 0;
+    border-bottom: 1px solid #3a3228;
   }
 
   .consola {
-    min-height: 70vh;
+    min-height: 50vh;
   }
 }

@@ -1,0 +1,201 @@
+:root {
+  color: #f3ead7;
+  background: #14120f;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #221e19;
+  border-right: 1px solid #3a3228;
+}
+
+.marca h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+}
+
+.marca p,
+.ayuda,
+.vacio {
+  margin: 0;
+  color: #cbbba4;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.servidor,
+.secundario,
+.alta button,
+.huella button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #e8a87c;
+  color: #1c1915;
+  cursor: pointer;
+}
+
+.servidor {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #2c261f;
+  color: #f3ead7;
+  text-align: left;
+}
+
+.servidor.activo {
+  outline: 1px solid #e8a87c;
+}
+
+.secundario,
+.consola-barra .secundario {
+  background: transparent;
+  color: #f3ead7;
+  border: 1px solid #6d5c49;
+}
+
+.alta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alta label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.92rem;
+}
+
+.alta input {
+  border: 1px solid #6d5c49;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #14120f;
+  color: #f3ead7;
+}
+
+.indicador {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.indicador-activa {
+  color: #8fceab;
+}
+
+.indicador-reintentando {
+  color: #e0b15a;
+}
+
+.indicador-inactiva {
+  color: #d08b78;
+}
+
+.motivo {
+  color: #cbbba4;
+}
+
+.error {
+  color: #d08b78;
+  margin: 0;
+}
+
+.consola {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 16px;
+  gap: 12px;
+}
+
+.consola-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.aviso,
+.huella {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #3a2a22;
+}
+
+.huella h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.terminal {
+  flex: 1;
+  min-height: 320px;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 8px;
+  background: #1c1915;
+}
+
+.vacio {
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+@media (max-width: 800px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .consola {
+    min-height: 70vh;
+  }
+}

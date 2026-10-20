@@ -1,0 +1,25 @@
+[package]
+name = "sshuttle-ssh"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Supervisor SSH: sesión, keepalive, reintentos y huella"
+
+[dependencies]
+russh = "0.64"
+serde.workspace = true
+sshuttle-terminal = { path = "../terminal" }
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+uuid = { version = "1", features = ["v4"] }
+zeroize = "1"
+
+[dev-dependencies]
+rand = "0.10"
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+
+[lints]
+workspace = true

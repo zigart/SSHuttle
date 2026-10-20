@@ -28,9 +28,9 @@ description: "Task list for the reconnecting SSH console"
 
 **Purpose**: Crear el esqueleto Tauri y los crates de este hito
 
-- [ ] T001 Crear el workspace Cargo en `Cargo.toml` con miembros `src-tauri`, `crates/ssh`, `crates/vault`, `crates/inventory` y `crates/terminal`
-- [ ] T002 Inicializar Tauri 2 en `src-tauri/Cargo.toml` y la UI React con xterm.js en `ui/package.json`
-- [ ] T003 [P] Configurar formato y clippy en `rustfmt.toml` y `Cargo.toml`
+- [x] T001 Crear el workspace Cargo en `Cargo.toml` con miembros `src-tauri`, `crates/ssh`, `crates/vault`, `crates/inventory` y `crates/terminal`
+- [x] T002 Inicializar Tauri 2 en `src-tauri/Cargo.toml` y la UI React con xterm.js en `ui/package.json`
+- [x] T003 [P] Configurar formato y clippy en `rustfmt.toml` y `Cargo.toml`
 
 ---
 
@@ -40,12 +40,12 @@ description: "Task list for the reconnecting SSH console"
 
 **⚠️ CRITICAL**: Ninguna historia empieza antes de cerrar esta fase
 
-- [ ] T004 Crear el esquema del perfil en `crates/inventory/src/schema.rs` con `id`, `nombre_visible`, `host` obligatorio y sin vacío, `puerto` entero 1–65535 con valor 22 si no se cambia, `usuario` obligatorio, `secreto_id` vacío hasta autenticar y `huella_host` vacía hasta la primera autenticación exitosa, sin columna de contraseña
-- [ ] T005 [P] Implementar el llavero en `crates/vault/src/lib.rs` con servicio `sshuttle` y cuenta igual a `secreto_id`, sin registrar la contraseña
-- [ ] T006 [P] Definir `SessionHandle` en `crates/ssh/src/session.rs` de modo que solo ese crate abra sockets `russh`
-- [ ] T007 [P] Definir el indicador `activa`, `inactiva` o `reintentando` y el motivo opcional en `crates/ssh/src/indicador.rs`
-- [ ] T008 Configurar el registro en `src-tauri/src/lib.rs` para no imprimir contraseñas ni el contenido del llavero
-- [ ] T009 Declarar los comandos y eventos de `specs/001-consola-reconexion/contracts/ipc.md` en `src-tauri/src/commands.rs`
+- [x] T004 Crear el esquema del perfil en `crates/inventory/src/schema.rs` con `id`, `nombre_visible`, `host` obligatorio y sin vacío, `puerto` entero 1–65535 con valor 22 si no se cambia, `usuario` obligatorio, `secreto_id` vacío hasta autenticar y `huella_host` vacía hasta la primera autenticación exitosa, sin columna de contraseña
+- [x] T005 [P] Implementar el llavero en `crates/vault/src/lib.rs` con servicio `sshuttle` y cuenta igual a `secreto_id`, sin registrar la contraseña
+- [x] T006 [P] Definir `SessionHandle` en `crates/ssh/src/session.rs` de modo que solo ese crate abra sockets `russh`
+- [x] T007 [P] Definir el indicador `activa`, `inactiva` o `reintentando` y el motivo opcional en `crates/ssh/src/indicador.rs`
+- [x] T008 Configurar el registro en `src-tauri/src/lib.rs` para no imprimir contraseñas ni el contenido del llavero
+- [x] T009 Declarar los comandos y eventos de `specs/001-consola-reconexion/contracts/ipc.md` en `src-tauri/src/commands.rs`
 
 **Checkpoint**: La fundación está lista y las historias pueden empezar
 
@@ -59,13 +59,13 @@ description: "Task list for the reconnecting SSH console"
 
 ### Implementation for User Story 1
 
-- [ ] T010 [P] [US1] Implementar `guardar_servidor` y `listar_servidores` en `crates/inventory/src/lib.rs`, con puerto omitido guardado como 22, `nombre_visible` copiado del host y sin campos de paquetes, Kubernetes ni tmux
-- [ ] T011 [US1] Autenticar con usuario y contraseña y abrir un PTY en `crates/ssh/src/session.rs`
-- [ ] T012 [US1] Publicar la salida del PTY y aplicar columnas y filas de la ventana en `crates/terminal/src/pty.rs`
-- [ ] T013 [US1] Conectar `conectar`, `escribir_consola`, `redimensionar_consola` y `salida_consola` en `src-tauri/src/commands.rs`
-- [ ] T014 [P] [US1] Crear el formulario de alta solo con host, puerto, usuario y contraseña en `ui/src/servers/ServerForm.tsx`
-- [ ] T015 [US1] Mostrar xterm.js y el indicador `activa` cuando la consola acepta escritura en `ui/src/console/Console.tsx`
-- [ ] T016 [US1] Mantener una sesión por id de servidor en `crates/ssh/src/supervisor.rs`
+- [x] T010 [P] [US1] Implementar `guardar_servidor` y `listar_servidores` en `crates/inventory/src/lib.rs`, con puerto omitido guardado como 22, `nombre_visible` copiado del host y sin campos de paquetes, Kubernetes ni tmux
+- [x] T011 [US1] Autenticar con usuario y contraseña y abrir un PTY en `crates/ssh/src/session.rs`
+- [x] T012 [US1] Publicar la salida del PTY y aplicar columnas y filas de la ventana en `crates/terminal/src/pty.rs`
+- [x] T013 [US1] Conectar `conectar`, `escribir_consola`, `redimensionar_consola` y `salida_consola` en `src-tauri/src/commands.rs`
+- [x] T014 [P] [US1] Crear el formulario de alta solo con host, puerto, usuario y contraseña en `ui/src/servers/ServerForm.tsx`
+- [x] T015 [US1] Mostrar xterm.js y el indicador `activa` cuando la consola acepta escritura en `ui/src/console/Console.tsx`
+- [x] T016 [US1] Mantener una sesión por id de servidor en `crates/ssh/src/supervisor.rs`
 
 **Checkpoint**: La historia 1 se usa sola, sin llavero ni reconexión
 
@@ -79,12 +79,12 @@ description: "Task list for the reconnecting SSH console"
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] Escribir la contraseña en el llavero solo después de una autenticación aceptada en `crates/ssh/src/session.rs`
-- [ ] T018 [US2] Guardar `secreto_id` sin la contraseña en `crates/inventory/src/lib.rs`
-- [ ] T019 [US2] Omitir la contraseña en `conectar` cuando el llavero ya tiene el secreto en `src-tauri/src/commands.rs`
-- [ ] T020 [US2] Emitir `inactiva` con motivo `falta_secreto` y no reintentar en `crates/ssh/src/supervisor.rs`
-- [ ] T021 [US2] Emitir `inactiva` con motivo `clave_rechazada` y no guardar la contraseña rechazada en `crates/ssh/src/session.rs`
-- [ ] T022 [US2] No volver a mostrar la contraseña después de enviarla en `ui/src/servers/ServerForm.tsx`
+- [x] T017 [US2] Escribir la contraseña en el llavero solo después de una autenticación aceptada en `crates/ssh/src/session.rs`
+- [x] T018 [US2] Guardar `secreto_id` sin la contraseña en `crates/inventory/src/lib.rs`
+- [x] T019 [US2] Omitir la contraseña en `conectar` cuando el llavero ya tiene el secreto en `src-tauri/src/commands.rs`
+- [x] T020 [US2] Emitir `inactiva` con motivo `falta_secreto` y no reintentar en `crates/ssh/src/supervisor.rs`
+- [x] T021 [US2] Emitir `inactiva` con motivo `clave_rechazada` y no guardar la contraseña rechazada en `crates/ssh/src/session.rs`
+- [x] T022 [US2] No volver a mostrar la contraseña después de enviarla en `ui/src/servers/ServerForm.tsx`
 
 **Checkpoint**: Las historias 1 y 2 funcionan. La segunda conexión no pide contraseña
 
@@ -98,12 +98,12 @@ description: "Task list for the reconnecting SSH console"
 
 ### Implementation for User Story 3
 
-- [ ] T023 [US3] Enviar keepalive cada 15 segundos en `crates/ssh/src/session.rs`
-- [ ] T024 [P] [US3] Implementar la espera 1, 2, 4, 8, 16 y luego 30 segundos en `crates/ssh/src/retry.rs`
-- [ ] T025 [US3] Mapear el corte de red a `reintentando` y la autenticación exitosa a `activa` en `crates/ssh/src/indicador.rs`
-- [ ] T026 [US3] Implementar `cerrar` para dejar `inactiva` y cancelar el temporizador en `crates/ssh/src/supervisor.rs`
-- [ ] T027 [US3] Publicar el evento `indicador` con un solo valor `activa`, `inactiva` o `reintentando` en `src-tauri/src/commands.rs`
-- [ ] T028 [US3] Mostrar exactamente `activa`, `inactiva` o `reintentando` en `ui/src/console/Indicator.tsx`
+- [x] T023 [US3] Enviar keepalive cada 15 segundos en `crates/ssh/src/session.rs`
+- [x] T024 [P] [US3] Implementar la espera 1, 2, 4, 8, 16 y luego 30 segundos en `crates/ssh/src/retry.rs`
+- [x] T025 [US3] Mapear el corte de red a `reintentando` y la autenticación exitosa a `activa` en `crates/ssh/src/indicador.rs`
+- [x] T026 [US3] Implementar `cerrar` para dejar `inactiva` y cancelar el temporizador en `crates/ssh/src/supervisor.rs`
+- [x] T027 [US3] Publicar el evento `indicador` con un solo valor `activa`, `inactiva` o `reintentando` en `src-tauri/src/commands.rs`
+- [x] T028 [US3] Mostrar exactamente `activa`, `inactiva` o `reintentando` en `ui/src/console/Indicator.tsx`
 
 **Checkpoint**: El corte de red se recupera solo y el indicador no tiene un cuarto valor
 
@@ -117,10 +117,10 @@ description: "Task list for the reconnecting SSH console"
 
 ### Implementation for User Story 4
 
-- [ ] T029 [US4] Guardar la huella SHA256 de la clave pública en la primera autenticación exitosa en `crates/ssh/src/hostkey.rs` y `crates/inventory/src/lib.rs`
-- [ ] T030 [US4] Cortar la sesión y emitir `inactiva` con motivo `huella_distinta` si la huella no coincide en `crates/ssh/src/session.rs`
-- [ ] T031 [US4] Implementar `confirmar_huella` para reemplazar la huella guardada y permitir un intento nuevo en `src-tauri/src/commands.rs`
-- [ ] T032 [US4] Pedir confirmación antes de aceptar la identidad nueva en `ui/src/console/HostKeyConfirm.tsx`
+- [x] T029 [US4] Guardar la huella SHA256 de la clave pública en la primera autenticación exitosa en `crates/ssh/src/hostkey.rs` y `crates/inventory/src/lib.rs`
+- [x] T030 [US4] Cortar la sesión y emitir `inactiva` con motivo `huella_distinta` si la huella no coincide en `crates/ssh/src/session.rs`
+- [x] T031 [US4] Implementar `confirmar_huella` para reemplazar la huella guardada y permitir un intento nuevo en `src-tauri/src/commands.rs`
+- [x] T032 [US4] Pedir confirmación antes de aceptar la identidad nueva en `ui/src/console/HostKeyConfirm.tsx`
 
 **Checkpoint**: Un host distinto no se acepta en silencio
 
@@ -134,10 +134,10 @@ description: "Task list for the reconnecting SSH console"
 
 ### Implementation for User Story 5
 
-- [ ] T033 [P] [US5] Detectar tmux con `command -v tmux` y usar `tmux new-session -A -s sshuttle` en `crates/terminal/src/tmux.rs`
-- [ ] T034 [US5] Abrir el shell del usuario cuando tmux no existe en `crates/terminal/src/pty.rs`
-- [ ] T035 [US5] No reenviar la entrada previa y emitir `trabajo_interrumpido` una sola vez al volver sin tmux en `crates/terminal/src/pty.rs`
-- [ ] T036 [US5] Mostrar el aviso de trabajo interrumpido solo cuando no se reenganchó `sshuttle` en `ui/src/console/Console.tsx`
+- [x] T033 [P] [US5] Detectar tmux con `command -v tmux` y usar `tmux new-session -A -s sshuttle` en `crates/terminal/src/tmux.rs`
+- [x] T034 [US5] Abrir el shell del usuario cuando tmux no existe en `crates/terminal/src/pty.rs`
+- [x] T035 [US5] No reenviar la entrada previa y emitir `trabajo_interrumpido` una sola vez al volver sin tmux en `crates/terminal/src/pty.rs`
+- [x] T036 [US5] Mostrar el aviso de trabajo interrumpido solo cuando no se reenganchó `sshuttle` en `ui/src/console/Console.tsx`
 
 **Checkpoint**: La consola se recupera con tmux y no relanza comandos por su cuenta
 
@@ -147,8 +147,8 @@ description: "Task list for the reconnecting SSH console"
 
 **Purpose**: Cierre del hito sin sumar capacidades fuera de la spec
 
-- [ ] T037 [P] Revisar que `src-tauri/src/lib.rs` y `crates/vault/src/lib.rs` no registran la contraseña ni el payload del llavero
-- [ ] T038 Ejecutar la validación de `specs/001-consola-reconexion/quickstart.md` contra un servidor SSH de prueba
+- [x] T037 [P] Revisar que `src-tauri/src/lib.rs` y `crates/vault/src/lib.rs` no registran la contraseña ni el payload del llavero
+- [x] T038 Ejecutar la validación de `specs/001-consola-reconexion/quickstart.md` contra un servidor SSH de prueba
 
 ---
 

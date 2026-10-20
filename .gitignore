@@ -1,0 +1,26 @@
+# Rust
+/target/
+target/
+debug/
+release/
+*.rs.bk
+*.rlib
+*.prof*
+*.log
+.env*
+
+# Node
+node_modules/
+dist/
+build/
+
+# Tauri
+src-tauri/gen/
+
+# Universal
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/

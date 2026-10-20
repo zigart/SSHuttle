@@ -11,7 +11,9 @@ import {
   type Servidor,
 } from "./api";
 import { Console } from "./console/Console";
-import { Indicator, esMotivo, esValorIndicador, type MotivoInactiva, type ValorIndicador } from "./console/Indicator";
+import { esMotivo, esValorIndicador, type MotivoInactiva, type ValorIndicador } from "./console/Indicator";
+import { CasilleroAlta } from "./servers/CasilleroAlta";
+import { Ficha } from "./servers/Ficha";
 import { ServerForm } from "./servers/ServerForm";
 
 type EstadoConexion = {
@@ -72,6 +74,7 @@ export function App() {
 
   const actual = servidores.find((servidor) => servidor.id === seleccion) ?? null;
   const estado = seleccion ? (estados[seleccion] ?? INACTIVA) : INACTIVA;
+  const altaNueva = seleccion === null;
 
   function mensaje(fallo: unknown, respaldo: string): string {
     if (typeof fallo === "string" && fallo.length > 0) return fallo;
@@ -106,6 +109,8 @@ export function App() {
       await recargar();
     } catch (fallo) {
       setError(mensaje(fallo, "No se pudo eliminar la conexión."));
+      setPidiendoBorrado(false);
+      await recargar().catch(() => undefined);
     } finally {
       setEnviando(false);
     }
@@ -134,31 +139,28 @@ export function App() {
 
   return (
     <main className="app">
+      <nav className="barra-fichas" aria-label="Conexiones">
+        {servidores.map((servidor) => {
+          const item = estados[servidor.id] ?? INACTIVA;
+          return (
+            <Ficha
+              key={servidor.id}
+              id={servidor.id}
+              nombreVisible={servidor.nombre_visible}
+              valor={item.valor}
+              elegida={servidor.id === seleccion}
+              onElegir={elegir}
+            />
+          );
+        })}
+        <CasilleroAlta elegido={altaNueva} onElegir={() => elegir(null)} />
+      </nav>
       <aside className="panel">
         <header className="marca">
           <h1>SSHuttle</h1>
           <p>Consola SSH</p>
         </header>
-        <ul className="lista">
-          {servidores.map((servidor) => {
-            const item = estados[servidor.id] ?? INACTIVA;
-            return (
-              <li key={servidor.id}>
-                <button
-                  type="button"
-                  className={servidor.id === seleccion ? "servidor activo" : "servidor"}
-                  onClick={() => elegir(servidor.id)}
-                >
-                  <span>{servidor.nombre_visible}</span>
-                  <Indicator valor={item.valor} />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        <button type="button" className="secundario" onClick={() => elegir(null)}>
-          Nuevo servidor
-        </button>
+        {actual ? <p className="nombre-elegido">{actual.nombre_visible}</p> : null}
         {actual && !pidiendoBorrado ? (
           <button type="button" className="secundario" onClick={() => setPidiendoBorrado(true)} disabled={enviando}>
             Eliminar

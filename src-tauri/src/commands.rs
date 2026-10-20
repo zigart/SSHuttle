@@ -133,6 +133,33 @@ pub fn cerrar(state: State<'_, AppState>, id: String) {
 }
 
 #[tauri::command]
+pub async fn eliminar_servidor(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let secreto_id = {
+        let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
+        match inventario.obtener(&id) {
+            Ok(servidor) => servidor.secreto_id,
+            Err(sshuttle_inventory::ErrorInventario::NoEncontrado) => return Ok(()),
+            Err(error) => return Err(error.to_string()),
+        }
+    };
+
+    state.supervisor.cerrar_y_esperar(&id).await;
+
+    if !secreto_id.is_empty() {
+        let cuenta = secreto_id;
+        let borrado = tokio::task::spawn_blocking(move || sshuttle_vault::borrar(&cuenta))
+            .await
+            .map_err(|_| "No se pudo eliminar la conexión.".to_string())?;
+        if borrado.is_err() {
+            return Err("No se pudo eliminar la conexión.".to_string());
+        }
+    }
+
+    let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
+    inventario.eliminar(&id).map_err(|_| "No se pudo eliminar la conexión.".to_string())
+}
+
+#[tauri::command]
 pub fn confirmar_huella(state: State<'_, AppState>, id: String) {
     state.supervisor.confirmar_huella(&id);
 }

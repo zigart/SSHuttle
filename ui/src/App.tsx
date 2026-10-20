@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 
-import { cerrar, confirmarHuella, conectar, guardarServidor, listarServidores, type Servidor } from "./api";
+import {
+  cerrar,
+  confirmarHuella,
+  conectar,
+  eliminarServidor,
+  guardarServidor,
+  listarServidores,
+  type Servidor,
+} from "./api";
 import { Console } from "./console/Console";
 import { Indicator, esMotivo, esValorIndicador, type MotivoInactiva, type ValorIndicador } from "./console/Indicator";
 import { ServerForm } from "./servers/ServerForm";
@@ -24,6 +32,7 @@ export function App() {
   const [interrumpidos, setInterrumpidos] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const [pidiendoBorrado, setPidiendoBorrado] = useState(false);
 
   const recargar = useCallback(async () => {
     const lista = await listarServidores();
@@ -64,6 +73,44 @@ export function App() {
   const actual = servidores.find((servidor) => servidor.id === seleccion) ?? null;
   const estado = seleccion ? (estados[seleccion] ?? INACTIVA) : INACTIVA;
 
+  function mensaje(fallo: unknown, respaldo: string): string {
+    if (typeof fallo === "string" && fallo.length > 0) return fallo;
+    if (fallo instanceof Error && fallo.message.length > 0) return fallo.message;
+    return respaldo;
+  }
+
+  function elegir(id: string | null) {
+    setSeleccion(id);
+    setPidiendoBorrado(false);
+  }
+
+  async function eliminarActual() {
+    if (!actual) return;
+    const id = actual.id;
+    setEnviando(true);
+    setError(null);
+    try {
+      await eliminarServidor(id);
+      setPidiendoBorrado(false);
+      setSeleccion(null);
+      setEstados((previo) => {
+        const siguiente = { ...previo };
+        delete siguiente[id];
+        return siguiente;
+      });
+      setInterrumpidos((previo) => {
+        const siguiente = { ...previo };
+        delete siguiente[id];
+        return siguiente;
+      });
+      await recargar();
+    } catch (fallo) {
+      setError(mensaje(fallo, "No se pudo eliminar la conexión."));
+    } finally {
+      setEnviando(false);
+    }
+  }
+
   async function abrir(datos: { host: string; puerto?: number; usuario: string; contrasena?: string }) {
     setEnviando(true);
     setError(null);
@@ -79,7 +126,7 @@ export function App() {
       await conectar(guardado.id, datos.contrasena);
       await recargar();
     } catch (fallo) {
-      setError(fallo instanceof Error ? fallo.message : "No se pudo abrir la consola.");
+      setError(mensaje(fallo, "No se pudo abrir la consola."));
     } finally {
       setEnviando(false);
     }
@@ -100,7 +147,7 @@ export function App() {
                 <button
                   type="button"
                   className={servidor.id === seleccion ? "servidor activo" : "servidor"}
-                  onClick={() => setSeleccion(servidor.id)}
+                  onClick={() => elegir(servidor.id)}
                 >
                   <span>{servidor.nombre_visible}</span>
                   <Indicator valor={item.valor} />
@@ -109,9 +156,32 @@ export function App() {
             );
           })}
         </ul>
-        <button type="button" className="secundario" onClick={() => setSeleccion(null)}>
+        <button type="button" className="secundario" onClick={() => elegir(null)}>
           Nuevo servidor
         </button>
+        {actual && !pidiendoBorrado ? (
+          <button type="button" className="secundario" onClick={() => setPidiendoBorrado(true)} disabled={enviando}>
+            Eliminar
+          </button>
+        ) : null}
+        {actual && pidiendoBorrado ? (
+          <div className="confirmar-borrado">
+            <p>¿Eliminar esta conexión? Se cierra la sesión y se olvida la contraseña.</p>
+            <div className="confirmar-acciones">
+              <button type="button" onClick={() => void eliminarActual()} disabled={enviando}>
+                Confirmar
+              </button>
+              <button
+                type="button"
+                className="secundario"
+                onClick={() => setPidiendoBorrado(false)}
+                disabled={enviando}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ) : null}
         <ServerForm
           key={actual?.id ?? "nuevo"}
           hostInicial={actual?.host}

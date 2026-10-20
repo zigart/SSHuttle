@@ -95,6 +95,13 @@ impl Inventario {
         Ok(())
     }
 
+    pub fn eliminar(&self, id: &str) -> Result<(), ErrorInventario> {
+        self.conexion
+            .execute("DELETE FROM servidores WHERE id = ?1", [id])
+            .map_err(|_| ErrorInventario::Base)?;
+        Ok(())
+    }
+
     pub fn asignar_huella(&self, id: &str, huella: &str) -> Result<(), ErrorInventario> {
         let cambiadas = self
             .conexion
@@ -161,6 +168,43 @@ mod tests {
         assert_eq!(lista[0].secreto_id, "sec-1");
         assert_eq!(lista[0].huella_host, "SHA256:abc");
         assert_eq!(lista[0].puerto, 22);
+        let _ = std::fs::remove_file(ruta);
+    }
+
+    #[test]
+    fn eliminar_quita_una_fila_y_deja_las_demas() {
+        let (ruta, inventario) = temporal();
+        let uno = inventario
+            .guardar(Alta { id: None, host: "uno".into(), puerto: None, usuario: "ana".into() })
+            .unwrap();
+        let dos = inventario
+            .guardar(Alta {
+                id: None,
+                host: "dos".into(),
+                puerto: Some(2222),
+                usuario: "bob".into(),
+            })
+            .unwrap();
+        inventario.asignar_secreto(&dos.id, "sec-dos").unwrap();
+        inventario.asignar_huella(&dos.id, "SHA256:dos").unwrap();
+
+        inventario.eliminar(&uno.id).unwrap();
+        inventario.eliminar(&uno.id).unwrap();
+
+        let lista = inventario.listar().unwrap();
+        assert_eq!(lista.len(), 1);
+        assert_eq!(lista[0].id, dos.id);
+        assert_eq!(lista[0].nombre_visible, "dos");
+        assert_eq!(lista[0].host, "dos");
+        assert_eq!(lista[0].puerto, 2222);
+        assert_eq!(lista[0].usuario, "bob");
+        assert_eq!(lista[0].secreto_id, "sec-dos");
+        assert_eq!(lista[0].huella_host, "SHA256:dos");
+        drop(inventario);
+
+        let reabierto = Inventario::abrir(&ruta).unwrap();
+        assert!(reabierto.obtener(&uno.id).is_err());
+        assert_eq!(reabierto.listar().unwrap().len(), 1);
         let _ = std::fs::remove_file(ruta);
     }
 }

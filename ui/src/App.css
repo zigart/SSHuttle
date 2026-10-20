@@ -146,6 +146,34 @@ input {
   margin: 0;
 }
 
+.confirmar-borrado {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: #3a2a22;
+}
+
+.confirmar-borrado p {
+  margin: 0;
+}
+
+.confirmar-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.confirmar-acciones button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #e8a87c;
+  color: #1c1915;
+  cursor: pointer;
+}
+
 .consola {
   display: flex;
   flex-direction: column;

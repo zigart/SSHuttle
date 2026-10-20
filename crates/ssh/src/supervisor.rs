@@ -114,6 +114,30 @@ impl Supervisor {
         self.enviar(id, Orden::Cerrar);
     }
 
+    /// Cierra la sesión de ese id y no vuelve hasta que el lazo terminó.
+    /// Sin sesión, termina enseguida.
+    pub async fn cerrar_y_esperar(&self, id: &str) {
+        let generacion = {
+            let sesiones = self.sesiones.lock().unwrap_or_else(|e| e.into_inner());
+            let Some(vivo) = sesiones.get(id) else {
+                return;
+            };
+            let generacion = vivo.generacion;
+            let _ = vivo.ordenes.send(Orden::Cerrar);
+            generacion
+        };
+        loop {
+            let sigue = {
+                let sesiones = self.sesiones.lock().unwrap_or_else(|e| e.into_inner());
+                sesiones.get(id).is_some_and(|vivo| vivo.generacion == generacion)
+            };
+            if !sigue {
+                return;
+            }
+            tokio::time::sleep(Duration::from_millis(20)).await;
+        }
+    }
+
     pub fn confirmar_huella(&self, id: &str) {
         self.enviar(id, Orden::ConfirmarHuella);
     }

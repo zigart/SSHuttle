@@ -391,6 +391,37 @@ async fn sin_secreto_queda_inactiva_y_no_llama_al_servidor() {
 }
 
 #[tokio::test]
+async fn cerrar_y_esperar_detiene_la_sesion() {
+    let servidor = ServidorPrueba::arrancar("ana", "correcta", false).await;
+    let memoria = memoria();
+    let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
+    let supervisor = Supervisor::nuevo(
+        Arc::clone(&memoria) as _,
+        Arc::clone(&memoria) as _,
+        tx,
+        tokio::runtime::Handle::current(),
+    );
+    supervisor.conectar(perfil(servidor.puerto, "", ""), Some("correcta".into()));
+    let _ = acumular(
+        &mut rx,
+        |ev| ev.iter().any(|e| es(e, Indicador::Activa, None)),
+        Duration::from_secs(8),
+    )
+    .await;
+    let antes = servidor.estado.conexiones.load(Ordering::SeqCst);
+    supervisor.cerrar_y_esperar("srv").await;
+    let _ = acumular(
+        &mut rx,
+        |ev| ev.iter().any(|e| es(e, Indicador::Inactiva, Some(MotivoInactiva::Cerrada))),
+        Duration::from_secs(4),
+    )
+    .await;
+    tokio::time::sleep(Duration::from_millis(400)).await;
+    assert_eq!(servidor.estado.conexiones.load(Ordering::SeqCst), antes);
+    supervisor.cerrar_y_esperar("srv").await;
+}
+
+#[tokio::test]
 async fn el_corte_reintenta_sin_reenviar_y_cerrar_detiene() {
     let clave =
         PrivateKey::random(&mut rand::rng(), russh::keys::Algorithm::Ed25519).expect("clave");

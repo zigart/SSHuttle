@@ -122,15 +122,32 @@ input {
 
 .marca p,
 .ayuda,
-.vacio,
-.nombre-elegido {
+.vacio {
   margin: 0;
   color: #cbbba4;
 }
 
-.nombre-elegido {
-  font-size: 1.05rem;
+.nombre-elegido-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nombre-elegido-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.92rem;
+  color: #cbbba4;
+}
+
+.nombre-elegido-form input {
+  border: 1px solid #6d5c49;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #14120f;
   color: #f3ead7;
+  font-size: 1.05rem;
   font-weight: 600;
 }
 

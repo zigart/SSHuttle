@@ -3,7 +3,7 @@ mod schema;
 use std::path::Path;
 
 use rusqlite::{params, Connection, OptionalExtension};
-pub use schema::{validar, Alta, ErrorPerfil, PerfilValidado, Servidor};
+pub use schema::{validar, validar_nombre, Alta, ErrorPerfil, PerfilValidado, Servidor};
 
 #[derive(Debug, thiserror::Error)]
 pub enum ErrorInventario {
@@ -42,7 +42,21 @@ impl Inventario {
     }
 
     pub fn guardar(&self, alta: Alta) -> Result<Servidor, ErrorInventario> {
-        let perfil = validar(alta)?;
+        let nombre_pedido = alta.nombre_visible.clone();
+        let mut perfil = validar(Alta {
+            nombre_visible: None,
+            id: alta.id.clone(),
+            host: alta.host.clone(),
+            puerto: alta.puerto,
+            usuario: alta.usuario.clone(),
+        })?;
+        perfil.nombre_visible = match nombre_pedido.as_ref().map(|n| n.trim()).filter(|n| !n.is_empty()) {
+            Some(nombre) => nombre.to_string(),
+            None => match alta.id.as_ref().filter(|id| !id.trim().is_empty()).and_then(|id| self.obtener(id).ok()) {
+                Some(existente) => existente.nombre_visible,
+                None => perfil.host.clone(),
+            },
+        };
         self.conexion
             .execute(
                 "INSERT INTO servidores (id, nombre_visible, host, puerto, usuario, secreto_id, huella_host)
@@ -56,6 +70,18 @@ impl Inventario {
             )
             .map_err(|_| ErrorInventario::Base)?;
         self.obtener(&perfil.id)
+    }
+
+    pub fn renombrar(&self, id: &str, nombre_visible: &str) -> Result<Servidor, ErrorInventario> {
+        let nombre = validar_nombre(nombre_visible)?;
+        let cambiadas = self
+            .conexion
+            .execute("UPDATE servidores SET nombre_visible = ?1 WHERE id = ?2", params![nombre, id])
+            .map_err(|_| ErrorInventario::Base)?;
+        if cambiadas == 0 {
+            return Err(ErrorInventario::NoEncontrado);
+        }
+        self.obtener(id)
     }
 
     pub fn listar(&self) -> Result<Vec<Servidor>, ErrorInventario> {

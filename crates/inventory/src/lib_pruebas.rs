@@ -10,7 +10,13 @@ fn temporal() -> (std::path::PathBuf, Inventario) {
 fn el_perfil_no_tiene_columna_de_contrasena_y_sobrevive() {
     let (ruta, inventario) = temporal();
     let guardado = inventario
-        .guardar(Alta { id: None, host: "bastion".into(), puerto: None, usuario: "ana".into() })
+        .guardar(Alta {
+            id: None,
+            host: "bastion".into(),
+            puerto: None,
+            usuario: "ana".into(),
+            nombre_visible: None,
+        })
         .unwrap();
     assert_eq!(guardado.puerto, 22);
     assert_eq!(guardado.nombre_visible, "bastion");
@@ -40,13 +46,57 @@ fn el_perfil_no_tiene_columna_de_contrasena_y_sobrevive() {
 }
 
 #[test]
+fn renombrar_cambia_el_nombre_y_guardar_sin_nombre_lo_conserva() {
+    let (ruta, inventario) = temporal();
+    let guardado = inventario
+        .guardar(Alta {
+            id: None,
+            host: "10.0.0.1".into(),
+            puerto: None,
+            usuario: "ana".into(),
+            nombre_visible: None,
+        })
+        .unwrap();
+    let renombrado = inventario.renombrar(&guardado.id, "  bastion prod  ").unwrap();
+    assert_eq!(renombrado.nombre_visible, "bastion prod");
+
+    let otra_vez = inventario
+        .guardar(Alta {
+            id: Some(guardado.id.clone()),
+            host: "10.0.0.2".into(),
+            puerto: Some(2222),
+            usuario: "ana".into(),
+            nombre_visible: None,
+        })
+        .unwrap();
+    assert_eq!(otra_vez.nombre_visible, "bastion prod");
+    assert_eq!(otra_vez.host, "10.0.0.2");
+    assert_eq!(otra_vez.puerto, 2222);
+
+    assert!(inventario.renombrar(&guardado.id, "   ").is_err());
+    let _ = std::fs::remove_file(ruta);
+}
+
+#[test]
 fn eliminar_quita_una_fila_y_deja_las_demas() {
     let (ruta, inventario) = temporal();
     let uno = inventario
-        .guardar(Alta { id: None, host: "uno".into(), puerto: None, usuario: "ana".into() })
+        .guardar(Alta {
+            id: None,
+            host: "uno".into(),
+            puerto: None,
+            usuario: "ana".into(),
+            nombre_visible: None,
+        })
         .unwrap();
     let dos = inventario
-        .guardar(Alta { id: None, host: "dos".into(), puerto: Some(2222), usuario: "bob".into() })
+        .guardar(Alta {
+            id: None,
+            host: "dos".into(),
+            puerto: Some(2222),
+            usuario: "bob".into(),
+            nombre_visible: None,
+        })
         .unwrap();
     inventario.asignar_secreto(&dos.id, "sec-dos").unwrap();
     inventario.asignar_huella(&dos.id, "SHA256:dos").unwrap();

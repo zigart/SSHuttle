@@ -44,6 +44,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::listar_servidores,
             commands::guardar_servidor,
+            commands::renombrar_servidor,
             commands::conectar,
             commands::cerrar,
             commands::eliminar_servidor,

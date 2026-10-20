@@ -108,10 +108,24 @@ pub fn guardar_servidor(
     host: String,
     puerto: Option<u16>,
     usuario: String,
+    nombre_visible: Option<String>,
 ) -> Result<ServidorDto, String> {
     let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
     inventario
-        .guardar(Alta { id, host, puerto, usuario })
+        .guardar(Alta { id, host, puerto, usuario, nombre_visible })
+        .map(dto)
+        .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub fn renombrar_servidor(
+    state: State<'_, AppState>,
+    id: String,
+    nombre_visible: String,
+) -> Result<ServidorDto, String> {
+    let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
+    inventario
+        .renombrar(&id, &nombre_visible)
         .map(dto)
         .map_err(|error| error.to_string())
 }

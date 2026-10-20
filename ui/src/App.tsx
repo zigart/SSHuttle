@@ -8,12 +8,14 @@ import {
   eliminarServidor,
   guardarServidor,
   listarServidores,
+  renombrarServidor,
   type Servidor,
 } from "./api";
 import { Console } from "./console/Console";
 import { esMotivo, esValorIndicador, type MotivoInactiva, type ValorIndicador } from "./console/Indicator";
 import { CasilleroAlta } from "./servers/CasilleroAlta";
 import { Ficha } from "./servers/Ficha";
+import { NombreVisible } from "./servers/NombreVisible";
 import { ServerForm } from "./servers/ServerForm";
 
 type EstadoConexion = {
@@ -137,6 +139,20 @@ export function App() {
     }
   }
 
+  async function renombrarActual(nombre: string) {
+    if (!actual) return;
+    setEnviando(true);
+    setError(null);
+    try {
+      await renombrarServidor(actual.id, nombre);
+      await recargar();
+    } catch (fallo) {
+      setError(mensaje(fallo, "No se pudo renombrar la conexión."));
+    } finally {
+      setEnviando(false);
+    }
+  }
+
   return (
     <main className="app">
       <nav className="barra-fichas" aria-label="Conexiones">
@@ -160,7 +176,14 @@ export function App() {
           <h1>SSHuttle</h1>
           <p>Consola SSH</p>
         </header>
-        {actual ? <p className="nombre-elegido">{actual.nombre_visible}</p> : null}
+        {actual ? (
+          <NombreVisible
+            key={actual.id}
+            valor={actual.nombre_visible}
+            enviando={enviando}
+            onGuardar={(nombre) => void renombrarActual(nombre)}
+          />
+        ) : null}
         {actual && !pidiendoBorrado ? (
           <button type="button" className="secundario" onClick={() => setPidiendoBorrado(true)} disabled={enviando}>
             Eliminar

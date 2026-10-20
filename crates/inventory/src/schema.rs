@@ -13,12 +13,14 @@ pub struct Servidor {
 }
 
 /// Datos que el operador escribe al dar de alta o editar. El puerto vacío queda en 22.
+/// `nombre_visible` vacío o ausente: en el alta se copia el host; al actualizar se conserva el guardado.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Alta {
     pub id: Option<String>,
     pub host: String,
     pub puerto: Option<u16>,
     pub usuario: String,
+    pub nombre_visible: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -38,6 +40,8 @@ pub enum ErrorPerfil {
     UsuarioVacio,
     #[error("el puerto tiene que estar entre 1 y 65535")]
     PuertoInvalido,
+    #[error("el nombre visible es obligatorio")]
+    NombreVacio,
 }
 
 pub fn validar(alta: Alta) -> Result<PerfilValidado, ErrorPerfil> {
@@ -58,5 +62,17 @@ pub fn validar(alta: Alta) -> Result<PerfilValidado, ErrorPerfil> {
         Some(id) if !id.trim().is_empty() => id,
         _ => uuid::Uuid::new_v4().to_string(),
     };
-    Ok(PerfilValidado { nombre_visible: host.clone(), host, puerto, usuario, id })
+    let nombre_visible = match alta.nombre_visible.as_ref().map(|n| n.trim()).filter(|n| !n.is_empty()) {
+        Some(nombre) => nombre.to_string(),
+        None => host.clone(),
+    };
+    Ok(PerfilValidado { nombre_visible, host, puerto, usuario, id })
+}
+
+pub fn validar_nombre(nombre_visible: &str) -> Result<String, ErrorPerfil> {
+    let nombre = nombre_visible.trim().to_string();
+    if nombre.is_empty() {
+        return Err(ErrorPerfil::NombreVacio);
+    }
+    Ok(nombre)
 }

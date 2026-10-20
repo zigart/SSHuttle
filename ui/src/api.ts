@@ -15,6 +15,7 @@ export type Alta = {
   host: string;
   puerto?: number;
   usuario: string;
+  nombre_visible?: string;
 };
 
 export function listarServidores(): Promise<Servidor[]> {
@@ -22,7 +23,17 @@ export function listarServidores(): Promise<Servidor[]> {
 }
 
 export function guardarServidor(alta: Alta): Promise<Servidor> {
-  return invoke("guardar_servidor", alta);
+  return invoke("guardar_servidor", {
+    id: alta.id ?? null,
+    host: alta.host,
+    puerto: alta.puerto ?? null,
+    usuario: alta.usuario,
+    nombre_visible: alta.nombre_visible ?? null,
+  });
+}
+
+export function renombrarServidor(id: string, nombre_visible: string): Promise<Servidor> {
+  return invoke("renombrar_servidor", { id, nombre_visible });
 }
 
 export function conectar(id: string, contrasena?: string): Promise<void> {

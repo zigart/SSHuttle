@@ -1,0 +1,16 @@
+[package]
+name = "sshuttle-vault"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Contraseña en el llavero del sistema"
+
+[dependencies]
+keyring = { version = "4", default-features = true }
+thiserror.workspace = true
+tracing.workspace = true
+zeroize = "1"
+
+[lints]
+workspace = true

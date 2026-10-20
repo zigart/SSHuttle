@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="580" viewBox="0 0 1360 580" role="img" aria-labelledby="title desc">
+  <title id="title">Estados de la conexión</title>
+  <desc id="desc">La sesión pasa de desconectada a conectando, lista, sondeando y descubierta. Si falta el secreto se pide una vez. Un corte vuelve a conectando. Al reconectar se vuelve a sondear. Cerrar vuelve a desconectado.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#243044"/>
+    </marker>
+  </defs>
+  <rect width="1360" height="580" fill="#f4f7fa"/>
+
+  <circle cx="36" cy="176" r="7" fill="#243044"/>
+  <line x1="44" y1="176" x2="84" y2="176" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="88" y="150" width="160" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="168" y="181" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Desconectado</text>
+
+  <rect x="368" y="150" width="160" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="448" y="181" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Conectando</text>
+
+  <rect x="648" y="150" width="160" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="728" y="181" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Listo</text>
+
+  <rect x="908" y="150" width="170" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="993" y="181" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Sondeando</text>
+
+  <rect x="1168" y="150" width="160" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="1248" y="181" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Descubierto</text>
+
+  <line x1="248" y1="176" x2="364" y2="176" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="306" y="140" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">abrir o reintento</text>
+
+  <line x1="528" y1="176" x2="644" y2="176" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="586" y="132" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">autenticado</text>
+  <text x="586" y="146" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">con el llavero</text>
+
+  <line x1="808" y1="176" x2="904" y2="176" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="856" y="140" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">sondeo automático</text>
+
+  <line x1="1078" y1="176" x2="1164" y2="176" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="1121" y="132" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">capacidades</text>
+  <text x="1121" y="146" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">listas</text>
+
+  <path d="M1168 158 L1168 64 L993 64 L993 146" fill="none" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="1080" y="56" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">reconexión completada</text>
+
+  <rect x="358" y="292" width="180" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="448" y="323" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Falta secreto</text>
+
+  <line x1="420" y1="202" x2="420" y2="288" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="408" y="236" text-anchor="end" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">no hay secreto</text>
+  <text x="408" y="250" text-anchor="end" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">guardado</text>
+
+  <path d="M538 318 L620 318 L620 230 L490 230 L490 206" fill="none" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="546" y="338" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">guarda el secreto</text>
+
+  <path d="M1248 202 L1248 430 L280 430 L280 202 L364 202" fill="none" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M728 202 L728 430" fill="none" stroke="#243044" stroke-width="1.5"/>
+  <text x="980" y="422" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">corte de red</text>
+
+  <path d="M1308 202 L1308 510 L168 510 L168 206" fill="none" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="738" y="502" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">el usuario cierra</text>
+</svg>

@@ -1,0 +1,18 @@
+---
+description: Modelo de ramas. develop integra, main es producción, el trabajo va en feature, release y hotfix.
+alwaysApply: true
+---
+
+# Ramas
+
+`develop` es la rama default. `main` es producción.
+
+- El trabajo de una fase o un arreglo sale de `develop` como `feature/<nombre>` y vuelve solo a `develop`.
+- Una versión lista sale de `develop` como `release/<version>`, se integra en `main` y después en `develop`.
+- Un arreglo de producción sale de `main` como `hotfix/<nombre>`, se integra en `main` y después en `develop`.
+- No se commitea directo en `main`. No se hace force push ni se borra `main` ni `develop`.
+
+```text
+git switch develop
+git switch -c feature/supervisor
+```

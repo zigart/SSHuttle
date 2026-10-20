@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="740" viewBox="0 0 1120 740" role="img" aria-labelledby="title desc">
+  <title id="title">Capas de SSHuttle</title>
+  <desc id="desc">La interfaz llama a los comandos. El núcleo Rust guarda inventario y secretos, supervisa la sesión SSH y ofrece sondeo, consola, archivos, actualizaciones y pods. El asistente habla con el modelo y con esas capacidades. El servidor se alcanza solo por SSH.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#243044"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="740" fill="#f4f7fa"/>
+  <rect x="28" y="176" width="1000" height="400" rx="14" fill="#e7eef5" stroke="#9aafc4" stroke-width="1.5"/>
+  <text x="48" y="204" fill="#3d5166" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="700">Núcleo Rust</text>
+
+  <rect x="556" y="22" width="180" height="46" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="646" y="50" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="700">UI React</text>
+
+  <rect x="526" y="102" width="240" height="46" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="646" y="130" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="700">Comandos Tauri</text>
+
+  <line x1="646" y1="68" x2="646" y2="98" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="646" y1="148" x2="646" y2="208" stroke="#243044" stroke-width="1.5"/>
+  <line x1="174" y1="208" x2="882" y2="208" stroke="#243044" stroke-width="1.5"/>
+  <line x1="174" y1="208" x2="174" y2="232" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="410" y1="208" x2="410" y2="232" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="646" y1="208" x2="646" y2="232" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="882" y1="208" x2="882" y2="232" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="64" y="236" width="220" height="54" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="174" y="258" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Inventario</text>
+  <text x="174" y="276" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">SQLite</text>
+
+  <rect x="300" y="236" width="220" height="54" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="410" y="268" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Llavero</text>
+
+  <rect x="536" y="236" width="220" height="54" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="646" y="258" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Supervisor</text>
+  <text x="646" y="276" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">SSH</text>
+
+  <rect x="772" y="236" width="220" height="54" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="882" y="268" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Asistente</text>
+
+  <line x1="646" y1="290" x2="646" y2="352" stroke="#243044" stroke-width="1.5"/>
+  <line x1="148" y1="352" x2="884" y2="352" stroke="#243044" stroke-width="1.5"/>
+  <line x1="148" y1="352" x2="148" y2="396" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="332" y1="352" x2="332" y2="396" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="516" y1="352" x2="516" y2="396" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="700" y1="352" x2="700" y2="396" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="884" y1="352" x2="884" y2="396" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="64" y="400" width="168" height="50" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="148" y="430" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Sondeo</text>
+
+  <rect x="248" y="400" width="168" height="50" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="332" y="422" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">Consola</text>
+  <text x="332" y="438" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">PTY</text>
+
+  <rect x="432" y="400" width="168" height="50" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="516" y="430" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">SFTP</text>
+
+  <rect x="616" y="400" width="168" height="50" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="700" y="430" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">apt y dnf</text>
+
+  <rect x="800" y="400" width="168" height="50" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="884" y="430" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="700">kubectl</text>
+
+  <text x="882" y="322" text-anchor="middle" fill="#526070" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="12">llama a las capacidades</text>
+
+  <line x1="148" y1="450" x2="148" y2="508" stroke="#243044" stroke-width="1.5"/>
+  <line x1="332" y1="450" x2="332" y2="508" stroke="#243044" stroke-width="1.5"/>
+  <line x1="516" y1="450" x2="516" y2="508" stroke="#243044" stroke-width="1.5"/>
+  <line x1="700" y1="450" x2="700" y2="508" stroke="#243044" stroke-width="1.5"/>
+  <line x1="884" y1="450" x2="884" y2="508" stroke="#243044" stroke-width="1.5"/>
+  <line x1="148" y1="508" x2="884" y2="508" stroke="#243044" stroke-width="1.5"/>
+  <line x1="516" y1="508" x2="516" y2="616" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <path d="M992 263 L1064 263 L1064 645 L1010 645" fill="none" stroke="#243044" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="396" y="620" width="240" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="516" y="651" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="700">Servidor SSH</text>
+
+  <rect x="760" y="620" width="250" height="52" rx="8" fill="#ffffff" stroke="#243044" stroke-width="1.5"/>
+  <text x="885" y="651" text-anchor="middle" fill="#1a2332" font-family="Liberation Sans, DejaVu Sans, sans-serif" font-size="16" font-weight="700">Modelo local o API</text>
+</svg>

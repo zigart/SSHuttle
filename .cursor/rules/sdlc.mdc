@@ -1,0 +1,24 @@
+---
+description: Ciclo de desarrollo de SSHuttle. Obliga a seguir la arquitectura, la constitución y el orden de fases.
+alwaysApply: true
+---
+
+# SDLC
+
+Antes de escribir código de producto, leé `docs/arquitectura.md` y `.specify/memory/constitution.md`.
+
+- Una conducta nueva sigue `/speckit.specify`, `/speckit.plan`, `/speckit.tasks` y después `/speckit.implement`.
+- Implementá solo la fase en curso, en este orden: supervisor, sondeo, consola, archivos, actualizaciones, pods, asistente, instaladores.
+- No especifiques ni codees lo que la constitución deja fuera de v1.
+- Si una decisión de producto cambia, actualizá `docs/arquitectura.md` en el mismo cambio.
+
+```text
+# Incorrecto: código de pods sin spec ni las fases anteriores
+crates/kube/src/lib.rs
+
+# Correcto: la fase 1 tiene spec, plan y tareas, y el código cubre solo esas tareas
+specs/001-supervisor/tasks.md
+crates/ssh/
+```
+
+Seguridad que no se negocia: secretos solo en el llavero, sondeo de solo lectura, lista blanca para `kubectl` y el asistente, confirmación antes de borrar un pod o aplicar paquetes. Solo el supervisor abre SSH.

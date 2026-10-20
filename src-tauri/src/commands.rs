@@ -26,6 +26,10 @@ impl Boveda for BovedaSistema {
     fn guardar(&self, secreto_id: &str, contrasena: &str) -> Result<(), ErrorBoveda> {
         sshuttle_vault::guardar(secreto_id, contrasena).map_err(|_| ErrorBoveda::Llavero)
     }
+
+    fn borrar(&self, secreto_id: &str) -> Result<(), ErrorBoveda> {
+        sshuttle_vault::borrar(secreto_id).map_err(|_| ErrorBoveda::Llavero)
+    }
 }
 
 pub struct Puente {
@@ -134,7 +138,20 @@ pub fn cerrar(state: State<'_, AppState>, id: String) {
 
 #[tauri::command]
 pub async fn eliminar_servidor(state: State<'_, AppState>, id: String) -> Result<(), String> {
-    let secreto_id = {
+    {
+        let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
+        match inventario.obtener(&id) {
+            Ok(_) => {}
+            Err(sshuttle_inventory::ErrorInventario::NoEncontrado) => return Ok(()),
+            Err(error) => return Err(error.to_string()),
+        }
+    }
+
+    state.supervisor.cerrar_y_esperar(&id).await;
+
+    // Tras el cierre: el inventario ya refleja un secreto persistido; si el llavero
+    // se escribió y asignar_secreto no alcanzó, queda en secreto_pendiente.
+    let mut secreto_id = {
         let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
         match inventario.obtener(&id) {
             Ok(servidor) => servidor.secreto_id,
@@ -142,10 +159,14 @@ pub async fn eliminar_servidor(state: State<'_, AppState>, id: String) -> Result
             Err(error) => return Err(error.to_string()),
         }
     };
+    if secreto_id.is_empty() {
+        if let Some(pendiente) = state.supervisor.secreto_pendiente(&id) {
+            secreto_id = pendiente;
+        }
+    }
 
-    state.supervisor.cerrar_y_esperar(&id).await;
-
-    if !secreto_id.is_empty() {
+    let secreto_borrado = !secreto_id.is_empty();
+    if secreto_borrado {
         let cuenta = secreto_id;
         let borrado = tokio::task::spawn_blocking(move || sshuttle_vault::borrar(&cuenta))
             .await
@@ -156,7 +177,16 @@ pub async fn eliminar_servidor(state: State<'_, AppState>, id: String) -> Result
     }
 
     let inventario = state.inventario.lock().unwrap_or_else(|error| error.into_inner());
-    inventario.eliminar(&id).map_err(|_| "No se pudo eliminar la conexión.".to_string())
+    match inventario.eliminar(&id) {
+        Ok(()) => Ok(()),
+        Err(_) => {
+            // El llavero ya no tiene la contraseña: no dejar la fila fingiendo que sí.
+            if secreto_borrado {
+                let _ = inventario.asignar_secreto(&id, "");
+            }
+            Err("No se pudo eliminar la conexión.".to_string())
+        }
+    }
 }
 
 #[tauri::command]

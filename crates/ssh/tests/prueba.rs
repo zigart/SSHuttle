@@ -29,6 +29,11 @@ impl Boveda for Memoria {
         self.secretos.lock().unwrap().insert(secreto_id.to_string(), contrasena.to_string());
         Ok(())
     }
+
+    fn borrar(&self, secreto_id: &str) -> Result<(), ErrorBoveda> {
+        self.secretos.lock().unwrap().remove(secreto_id);
+        Ok(())
+    }
 }
 
 impl Perfiles for Memoria {
@@ -419,6 +424,48 @@ async fn cerrar_y_esperar_detiene_la_sesion() {
     tokio::time::sleep(Duration::from_millis(400)).await;
     assert_eq!(servidor.estado.conexiones.load(Ordering::SeqCst), antes);
     supervisor.cerrar_y_esperar("srv").await;
+    assert!(supervisor.secreto_pendiente("srv").is_none());
+}
+
+struct PerfilesSinSecreto {
+    memoria: Arc<Memoria>,
+}
+
+impl Perfiles for PerfilesSinSecreto {
+    fn guardar_secreto_id(&self, _id: &str, _secreto_id: &str) -> Result<(), String> {
+        Err("inventario no disponible".into())
+    }
+
+    fn guardar_huella(&self, id: &str, huella: &str) -> Result<(), String> {
+        self.memoria.guardar_huella(id, huella)
+    }
+}
+
+#[tokio::test]
+async fn si_el_inventario_no_persiste_el_secreto_no_queda_en_la_boveda() {
+    let servidor = ServidorPrueba::arrancar("ana", "correcta", false).await;
+    let memoria = memoria();
+    let perfiles = Arc::new(PerfilesSinSecreto { memoria: Arc::clone(&memoria) });
+    let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
+    let supervisor = Supervisor::nuevo(
+        Arc::clone(&memoria) as _,
+        perfiles as _,
+        tx,
+        tokio::runtime::Handle::current(),
+    );
+    supervisor.conectar(perfil(servidor.puerto, "", ""), Some("correcta".into()));
+    let _ = acumular(
+        &mut rx,
+        |ev| ev.iter().any(|e| es(e, Indicador::Activa, None)),
+        Duration::from_secs(8),
+    )
+    .await;
+    tokio::time::sleep(Duration::from_millis(200)).await;
+    assert!(memoria.secretos.lock().unwrap().is_empty());
+    assert!(memoria.secretos_id.lock().unwrap().is_empty());
+    supervisor.cerrar_y_esperar("srv").await;
+    assert!(memoria.secretos.lock().unwrap().is_empty());
+    assert!(supervisor.secreto_pendiente("srv").is_none());
 }
 
 #[tokio::test]

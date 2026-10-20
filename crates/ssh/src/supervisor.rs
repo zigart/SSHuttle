@@ -29,6 +29,8 @@ pub enum ErrorBoveda {
 pub trait Boveda: Send + Sync {
     fn leer(&self, secreto_id: &str) -> Result<String, ErrorBoveda>;
     fn guardar(&self, secreto_id: &str, contrasena: &str) -> Result<(), ErrorBoveda>;
+    /// Ausente cuenta como éxito: el secreto ya no está.
+    fn borrar(&self, secreto_id: &str) -> Result<(), ErrorBoveda>;
 }
 
 pub trait Perfiles: Send + Sync {
@@ -53,6 +55,8 @@ enum Orden {
 struct Vivo {
     ordenes: UnboundedSender<Orden>,
     generacion: u64,
+    /// Escrito al llavero y aún no confirmado en el inventario (o a la espera de rollback).
+    secreto_pendiente: Option<String>,
 }
 
 enum FinBombeo {
@@ -98,7 +102,10 @@ impl Supervisor {
             *n += 1;
             *n
         };
-        sesiones.insert(perfil.id.clone(), Vivo { ordenes: tx, generacion });
+        sesiones.insert(
+            perfil.id.clone(),
+            Vivo { ordenes: tx, generacion, secreto_pendiente: None },
+        );
         drop(sesiones);
 
         let sesiones = Arc::clone(&self.sesiones);
@@ -114,8 +121,15 @@ impl Supervisor {
         self.enviar(id, Orden::Cerrar);
     }
 
+    /// Secreto escrito al llavero y todavía no reflejado en el inventario.
+    /// Sirve al borrado si el cierre no alcanzó a persistir el `secreto_id`.
+    pub fn secreto_pendiente(&self, id: &str) -> Option<String> {
+        let sesiones = self.sesiones.lock().unwrap_or_else(|e| e.into_inner());
+        sesiones.get(id).and_then(|vivo| vivo.secreto_pendiente.clone())
+    }
+
     /// Cierra la sesión de ese id y no vuelve hasta que el lazo terminó.
-    /// Sin sesión, termina enseguida.
+    /// Sin sesión, termina enseguida. Si el lazo no sale a tiempo, sigue igual (best-effort).
     pub async fn cerrar_y_esperar(&self, id: &str) {
         let generacion = {
             let sesiones = self.sesiones.lock().unwrap_or_else(|e| e.into_inner());
@@ -126,12 +140,17 @@ impl Supervisor {
             let _ = vivo.ordenes.send(Orden::Cerrar);
             generacion
         };
+        let tope = tokio::time::Instant::now() + Duration::from_secs(5);
         loop {
             let sigue = {
                 let sesiones = self.sesiones.lock().unwrap_or_else(|e| e.into_inner());
                 sesiones.get(id).is_some_and(|vivo| vivo.generacion == generacion)
             };
             if !sigue {
+                return;
+            }
+            if tokio::time::Instant::now() >= tope {
+                tracing::warn!(id, "el cierre de la sesión no terminó a tiempo");
                 return;
             }
             tokio::time::sleep(Duration::from_millis(20)).await;
@@ -261,6 +280,7 @@ async fn bucle(
             } else {
                 perfil.secreto_id.clone()
             };
+            marcar_pendiente(&sesiones, &id, generacion, Some(secreto_id.clone()));
             let guardado = tokio::task::spawn_blocking({
                 let boveda = Arc::clone(&boveda);
                 let secreto_id = secreto_id.clone();
@@ -272,15 +292,21 @@ async fn bucle(
                 }
             })
             .await;
-            if matches!(guardado, Ok(Ok(())))
-                && perfiles.guardar_secreto_id(&id, &secreto_id).is_ok()
-            {
-                perfil.secreto_id = secreto_id;
-                if let Some(mut clave) = contrasena_inicial.take() {
-                    clave.zeroize();
+            if matches!(guardado, Ok(Ok(()))) {
+                if perfiles.guardar_secreto_id(&id, &secreto_id).is_ok() {
+                    perfil.secreto_id = secreto_id;
+                    marcar_pendiente(&sesiones, &id, generacion, None);
+                    if let Some(mut clave) = contrasena_inicial.take() {
+                        clave.zeroize();
+                    }
+                } else {
+                    tracing::warn!("no se pudo guardar el secreto");
+                    let _ = borrar_en_boveda(&boveda, &secreto_id).await;
+                    marcar_pendiente(&sesiones, &id, generacion, None);
                 }
             } else {
                 tracing::warn!("no se pudo guardar el secreto");
+                marcar_pendiente(&sesiones, &id, generacion, None);
             }
         }
         if perfil.huella_host.is_empty() && !sesion.huella().is_empty() {
@@ -311,6 +337,9 @@ async fn bucle(
         }
     }
 
+    if let Some(cuenta) = tomar_pendiente(&sesiones, &id, generacion) {
+        let _ = borrar_en_boveda(&boveda, &cuenta).await;
+    }
     retirar(&sesiones, &id, generacion);
 }
 
@@ -490,6 +519,46 @@ fn emitir(eventos: &UnboundedSender<Evento>, id: &str, estado: EstadoIndicador) 
         valor: estado.valor,
         motivo: estado.motivo,
     });
+}
+
+fn marcar_pendiente(
+    sesiones: &Mutex<HashMap<String, Vivo>>,
+    id: &str,
+    generacion: u64,
+    secreto_id: Option<String>,
+) {
+    let mut sesiones = sesiones.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some(vivo) = sesiones.get_mut(id) {
+        if vivo.generacion == generacion {
+            vivo.secreto_pendiente = secreto_id;
+        }
+    }
+}
+
+fn tomar_pendiente(
+    sesiones: &Mutex<HashMap<String, Vivo>>,
+    id: &str,
+    generacion: u64,
+) -> Option<String> {
+    let mut sesiones = sesiones.lock().unwrap_or_else(|e| e.into_inner());
+    sesiones.get_mut(id).and_then(|vivo| {
+        if vivo.generacion == generacion {
+            vivo.secreto_pendiente.take()
+        } else {
+            None
+        }
+    })
+}
+
+async fn borrar_en_boveda(boveda: &Arc<dyn Boveda>, secreto_id: &str) -> Result<(), ErrorBoveda> {
+    if secreto_id.is_empty() {
+        return Ok(());
+    }
+    let boveda = Arc::clone(boveda);
+    let secreto_id = secreto_id.to_string();
+    tokio::task::spawn_blocking(move || boveda.borrar(&secreto_id))
+        .await
+        .unwrap_or(Err(ErrorBoveda::Llavero))
 }
 
 fn retirar(sesiones: &Mutex<HashMap<String, Vivo>>, id: &str, generacion: u64) {

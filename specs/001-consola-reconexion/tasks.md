@@ -149,6 +149,7 @@ description: "Task list for the reconnecting SSH console"
 
 - [x] T037 [P] Revisar que `src-tauri/src/lib.rs` y `crates/vault/src/lib.rs` no registran la contraseña ni el payload del llavero
 - [x] T038 Ejecutar la validación de `specs/001-consola-reconexion/quickstart.md` contra un servidor SSH de prueba
+- [x] T039 Cumplir FR-003: permitir editar `nombre_visible` desde el panel (`renombrar_servidor` / UI); al actualizar host/puerto/usuario sin nombre nuevo, conservar el nombre ya guardado
 
 ---
 

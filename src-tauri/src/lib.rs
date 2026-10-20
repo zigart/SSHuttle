@@ -46,6 +46,7 @@ pub fn run() {
             commands::guardar_servidor,
             commands::conectar,
             commands::cerrar,
+            commands::eliminar_servidor,
             commands::confirmar_huella,
             commands::escribir_consola,
             commands::redimensionar_consola,

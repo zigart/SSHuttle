@@ -103,6 +103,8 @@ El modelo no recibe contraseñas, claves privadas, kubeconfig ni el tráfico SSH
 
 Los crates de capacidades no abren sockets: reciben un handle del supervisor. El asistente no habla SSH: llama a esos crates. Así la reconexión, el sondeo y las credenciales viven en un solo lugar.
 
+Las pruebas no comparten archivo con la implementación. Cada módulo deja su conducta en su archivo y las pruebas en otro, al lado: `indicador.rs` y `indicador_pruebas.rs`. Ese archivo se compila solo al correr `cargo test` y puede usar funciones internas del módulo. Lo que prueba la API pública del crate va en `crates/<crate>/tests/`.
+
 ## Empaquetado y seguridad
 
 - El `.deb` declara la dependencia de WebKitGTK y apunta a Debian estable y Ubuntu LTS. AppImage lleva el runtime para no depender del sistema.

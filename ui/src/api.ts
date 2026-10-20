@@ -36,6 +36,10 @@ export function cerrar(id: string): Promise<void> {
   return invoke("cerrar", { id });
 }
 
+export function eliminarServidor(id: string): Promise<void> {
+  return invoke("eliminar_servidor", { id });
+}
+
 export function confirmarHuella(id: string): Promise<void> {
   return invoke("confirmar_huella", { id });
 }

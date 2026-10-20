@@ -56,6 +56,13 @@ Cada fase es una unidad de trabajo con esta secuencia:
 
 La pila es Tauri 2, núcleo Rust (`russh`, `russh-sftp`) y UI TypeScript con React. Una spec no cambia esa pila.
 
+## Pruebas
+
+Las pruebas no comparten archivo con la implementación. Un archivo de producto no contiene `#[test]` ni `#[tokio::test]`.
+
+- Las pruebas internas van en un archivo hermano, `<modulo>_pruebas.rs`, incluido solo con `#[cfg(test)]`.
+- Las pruebas de la API pública van en `tests/` de ese crate.
+
 ## Ramas
 
 `develop` es la rama default. `main` es producción. El trabajo no se commitea en `main`.
@@ -74,4 +81,4 @@ Una enmienda sube la versión: MAJOR si se elimina o se redefine un principio, M
 
 Cada spec y cada plan se revisan contra los cinco principios antes de implementar. Una desviación se escribe en la spec y se justifica, o no se implementa.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-20 | **Last Amended**: 2026-10-20
+**Version**: 1.2.0 | **Ratified**: 2026-10-20 | **Last Amended**: 2026-10-20

@@ -10,7 +10,7 @@ use tokio::net::TcpListener;
 use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::task::JoinHandle;
 
-use crate::{
+use sshuttle_ssh::{
     Boveda, ErrorBoveda, Evento, Indicador, MotivoInactiva, PerfilConexion, Perfiles, Supervisor,
 };
 

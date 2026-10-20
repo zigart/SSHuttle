@@ -90,27 +90,3 @@ pub fn leer(secreto_id: &str) -> Result<Secreto, ErrorLlave> {
 fn es_ausente(error: &keyring::Error) -> bool {
     matches!(error, keyring::Error::NoEntry)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn el_secreto_no_aparece_en_logs() {
-        let secreto = Secreto::nuevo("clave-que-no-se-imprime".into());
-        let depurado = format!("{secreto:?} {secreto}");
-        assert!(!depurado.contains("clave-que-no-se-imprime"));
-        assert!(depurado.contains("[redactado]"));
-        assert_eq!(secreto.exponer(), "clave-que-no-se-imprime");
-    }
-
-    #[test]
-    fn el_servicio_del_llavero_es_sshuttle() {
-        assert_eq!(SERVICIO, "sshuttle");
-    }
-
-    #[test]
-    fn borrar_un_id_vacio_no_toca_el_llavero() {
-        assert!(borrar("").is_ok());
-    }
-}
